@@ -116,20 +116,20 @@ public class MessageController {
     }
 
     /**
-     * 发送延迟消息
+     * 发送延迟消息（V5 支持自定义延迟时间，单位：秒）
      */
     @PostMapping("/send/delay")
     public Map<String, Object> sendDelayMessage(
             @RequestParam(defaultValue = "demo-topic") String topic,
             @RequestParam String message,
-            @RequestParam(defaultValue = "3") int delayLevel) {
+            @RequestParam(defaultValue = "10") int delaySeconds) {
         Map<String, Object> result = new HashMap<>();
         try {
-            messageProducer.sendDelayMessage(topic, message, delayLevel);
+            messageProducer.sendDelayMessage(topic, message, delaySeconds);
             result.put("success", true);
             result.put("message", "延迟消息发送成功");
             result.put("topic", topic);
-            result.put("delayLevel", delayLevel);
+            result.put("delaySeconds", delaySeconds);
             result.put("content", message);
         } catch (Exception e) {
             result.put("success", false);
@@ -139,20 +139,20 @@ public class MessageController {
     }
 
     /**
-     * 发送顺序消息
+     * 发送顺序消息（V5 使用 messageGroup 代替 hashKey）
      */
     @PostMapping("/send/orderly")
     public Map<String, Object> sendOrderlyMessage(
             @RequestParam(defaultValue = "demo-topic") String topic,
             @RequestParam String message,
-            @RequestParam String hashKey) {
+            @RequestParam String messageGroup) {
         Map<String, Object> result = new HashMap<>();
         try {
-            messageProducer.sendOrderlyMessage(topic, message, hashKey);
+            messageProducer.sendOrderlyMessage(topic, message, messageGroup);
             result.put("success", true);
             result.put("message", "顺序消息发送成功");
             result.put("topic", topic);
-            result.put("hashKey", hashKey);
+            result.put("messageGroup", messageGroup);
             result.put("content", message);
         } catch (Exception e) {
             result.put("success", false);

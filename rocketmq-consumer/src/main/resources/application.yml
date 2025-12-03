@@ -5,14 +5,23 @@ spring:
   application:
     name: rocketmq-consumer
 
-# RocketMQ Configuration
+# RocketMQ V5 Configuration (gRPC 协议)
 rocketmq:
-  # 使用集群外访问地址
-  name-server: 192.168.1.53:31637
-  # 如果在同一 K8s 集群内，使用内网地址：
-  # name-server: rocketmq-name-server-service.comm-plugins:9876
-  consumer:
-    group: demo-consumer-group
+  # SimpleConsumer 配置 (V5 Pull 模式)
+  simple-consumer:
+    enabled: true
+    # gRPC Proxy 地址 (RocketMQ 5.x)
+    endpoints: 192.168.1.53:31637
+    # 如果在同一 K8s 集群内，使用内网地址：
+    # endpoints: rocketmq-proxy-service.comm-plugins:8081
+    
+    consumer-group: demo-consumer-group
+    await-duration: 30
+    
+    # 订阅表达式（支持 Tag 和 SQL92 过滤）
+    subscription-expressions:
+      demo-topic: '*'
+      demo-topic-tag: 'tagA||tagB'
 
 # Logging
 logging:
