@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: rocketmq-producer
+
+# RocketMQ Configuration
+rocketmq:
+  # 使用集群外访问地址
+  name-server: 192.168.1.53:31637
+  # 如果在同一 K8s 集群内，使用内网地址：
+  # name-server: rocketmq-name-server-service.comm-plugins:9876
+  producer:
+    group: demo-producer-group
+    send-message-timeout: 10000
+    compress-message-body-threshold: 4096
+    max-message-size: 4194304
+    retry-times-when-send-failed: 3
+    retry-times-when-send-async-failed: 3
+    retry-next-server: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    '[com.example]': DEBUG
+    '[org.apache.rocketmq]': DEBUG

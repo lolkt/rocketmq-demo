@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rocketmq-consumer
+
+# RocketMQ Configuration
+rocketmq:
+  # 使用集群外访问地址
+  name-server: 192.168.1.53:31637
+  # 如果在同一 K8s 集群内，使用内网地址：
+  # name-server: rocketmq-name-server-service.comm-plugins:9876
+  consumer:
+    group: demo-consumer-group
+
+# Logging
+logging:
+  level:
+    root: INFO
+    '[com.example]': DEBUG
+    '[org.apache.rocketmq]': DEBUG
