@@ -1,8 +1,12 @@
 package com.example.rocketmq.producer.controller;
 
-import com.example.rocketmq.producer.service.MessageProducer;
+import com.example.rocketmq.producer.model.DemoSendMessage;
+import com.example.rocketmq.producer.sender.DemoSendMessageSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +17,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/message")
 public class MessageController {
-
     @Autowired
-    private MessageProducer messageProducer;
+    public DemoSendMessageSender emailSendMessageSender;
 
     /**
      * 健康检查
@@ -33,16 +36,19 @@ public class MessageController {
      * 发送同步消息
      */
     @PostMapping("/send/sync")
-    public Map<String, Object> sendSyncMessage(
-            @RequestParam(defaultValue = "demo-topic") String topic,
-            @RequestParam String message) {
+    public Map<String, Object> sendSyncMessage() {
         Map<String, Object> result = new HashMap<>();
         try {
-            messageProducer.sendSyncMessage(topic, message);
+
+            DemoSendMessage emailSendMessage = DemoSendMessage.builder()
+                    .recordId(1L)
+                    .bizId("2")
+                    .build();
+
+            emailSendMessageSender.send(emailSendMessage);
             result.put("success", true);
             result.put("message", "同步消息发送成功");
-            result.put("topic", topic);
-            result.put("content", message);
+
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "发送失败: " + e.getMessage());
@@ -50,114 +56,4 @@ public class MessageController {
         return result;
     }
 
-    /**
-     * 发送异步消息
-     */
-    @PostMapping("/send/async")
-    public Map<String, Object> sendAsyncMessage(
-            @RequestParam(defaultValue = "demo-topic") String topic,
-            @RequestParam String message) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            messageProducer.sendAsyncMessage(topic, message);
-            result.put("success", true);
-            result.put("message", "异步消息已提交");
-            result.put("topic", topic);
-            result.put("content", message);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "发送失败: " + e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 发送单向消息
-     */
-    @PostMapping("/send/oneway")
-    public Map<String, Object> sendOneWayMessage(
-            @RequestParam(defaultValue = "demo-topic") String topic,
-            @RequestParam String message) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            messageProducer.sendOneWayMessage(topic, message);
-            result.put("success", true);
-            result.put("message", "单向消息已发送");
-            result.put("topic", topic);
-            result.put("content", message);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "发送失败: " + e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 发送带标签的消息
-     */
-    @PostMapping("/send/tag")
-    public Map<String, Object> sendMessageWithTag(
-            @RequestParam(defaultValue = "demo-topic-tag") String topic,
-            @RequestParam String tag,
-            @RequestParam String message) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            messageProducer.sendMessageWithTag(topic, tag, message);
-            result.put("success", true);
-            result.put("message", "带标签消息发送成功");
-            result.put("topic", topic);
-            result.put("tag", tag);
-            result.put("content", message);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "发送失败: " + e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 发送延迟消息（V5 支持自定义延迟时间，单位：秒）
-     */
-    @PostMapping("/send/delay")
-    public Map<String, Object> sendDelayMessage(
-            @RequestParam(defaultValue = "demo-topic") String topic,
-            @RequestParam String message,
-            @RequestParam(defaultValue = "10") int delaySeconds) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            messageProducer.sendDelayMessage(topic, message, delaySeconds);
-            result.put("success", true);
-            result.put("message", "延迟消息发送成功");
-            result.put("topic", topic);
-            result.put("delaySeconds", delaySeconds);
-            result.put("content", message);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "发送失败: " + e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 发送顺序消息（V5 使用 messageGroup 代替 hashKey）
-     */
-    @PostMapping("/send/orderly")
-    public Map<String, Object> sendOrderlyMessage(
-            @RequestParam(defaultValue = "demo-topic") String topic,
-            @RequestParam String message,
-            @RequestParam String messageGroup) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            messageProducer.sendOrderlyMessage(topic, message, messageGroup);
-            result.put("success", true);
-            result.put("message", "顺序消息发送成功");
-            result.put("topic", topic);
-            result.put("messageGroup", messageGroup);
-            result.put("content", message);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "发送失败: " + e.getMessage());
-        }
-        return result;
-    }
 }

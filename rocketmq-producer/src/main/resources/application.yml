@@ -9,19 +9,15 @@ spring:
 rocketmq:
   producer:
     # gRPC Proxy 地址 (RocketMQ 5.x)
-    endpoints: 192.168.1.20:40000
+    endpoints: 192.168.1.96:8081
     # 如果在同一 K8s 集群内，使用内网地址：
     # endpoints: rocketmq-proxy-service.comm-plugins:8081
     
     # 生产者配置
-    topics: demo-topic,demo-topic-tag
-    request-timeout: 10
-    max-message-size: 4194304
+    topics: OrderTopic
+    request-timeout: 10000
+    ssl-enabled: false
 
-    enable-native-epoll: false
-    # 事务消息配置（可选）
-    transaction-checker:
-      enabled: false
 
 # Logging
 logging:
